@@ -1,0 +1,17 @@
+#gameBoard
+{
+    -fx-background-color: #78d948;
+}
+
+#box
+{
+    -fx-background-color: #a7ff7a;
+    -fx-border-style: solid;
+    -fx-border-color: #43ba07;
+    -fx-border-size: 10px;
+}
+
+#rec
+{
+    -fx-fill: #ded33a;
+}
