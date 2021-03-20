@@ -1,9 +1,7 @@
-package sample;
+package sample.GameElements;
 
 import java.util.ArrayList;
 import java.util.List;
-
-// Przenieść odpowiedzialność za ruchy na pola Field. Tablica z flagami?
 
 public class Snake {
     private List<Field> snake;

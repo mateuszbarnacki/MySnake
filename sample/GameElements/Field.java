@@ -1,4 +1,4 @@
-package sample;
+package sample.GameElements;
 
 public class Field {
     private int xCoord;

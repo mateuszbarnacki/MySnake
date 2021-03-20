@@ -9,8 +9,8 @@
 <?import javafx.scene.layout.HBox?>
 
 <?import javafx.scene.control.Label?>
-<BorderPane fx:controller="sample.GameWindowController"
-            xmlns:fx="http://javafx.com/fxml" id="gameBoard" stylesheets="@styles.css">
+<BorderPane fx:controller="sample.Window.GameWindowController"
+            xmlns:fx="http://javafx.com/fxml" id="gameBoard" stylesheets="@../Style/styles.css">
     <top>
         <BorderPane>
             <padding>
@@ -19,11 +19,7 @@
             <center>
                 <HBox id="box" spacing="50" alignment="CENTER">
                     <GridPane alignment="CENTER">
-                        <Label id="apple" GridPane.rowIndex="0" GridPane.columnIndex="0">
-<!--                            <graphic>
-                                <FontAwesomeIconView glyphName="APPLE" glyphSize="14"/>
-                            </graphic>
--->                        </Label>
+                        <Circle id="apple" radius="9.0" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
                         <Label text="=" textAlignment="CENTER" GridPane.rowIndex="0" GridPane.columnIndex="1" style="-fx-font-size: 20px;"/>
                         <Label fx:id="currentScore" text="0" textAlignment="CENTER" GridPane.rowIndex="0" GridPane.columnIndex="2" style="-fx-font-size: 20px"/>
                     </GridPane>
