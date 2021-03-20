@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 
 <?import javafx.scene.control.Label?>
-<BorderPane fx:controller="sample.Window.GameWindowController"
+<BorderPane fx:controller="MySnake.Window.GameWindowController"
             xmlns:fx="http://javafx.com/fxml" id="gameBoard" stylesheets="@../Style/styles.css">
     <top>
         <BorderPane>

@@ -1,4 +1,4 @@
-package sample.Window;
+package MySnake.Window;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -17,10 +17,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-import sample.GameElements.Field;
-import sample.GameElements.Snake;
-import sample.Utilities.KeyBuffer;
-import sample.Utilities.Record;
+import MySnake.GameElements.Field;
+import MySnake.GameElements.Snake;
+import MySnake.Utilities.KeyBuffer;
+import MySnake.Utilities.Record;
 
 import java.io.*;
 import java.nio.file.Files;

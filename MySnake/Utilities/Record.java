@@ -1,4 +1,4 @@
-package sample.Utilities;
+package MySnake.Utilities;
 
 import java.io.Serializable;
 

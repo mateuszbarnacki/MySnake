@@ -1,4 +1,4 @@
-package sample.GameElements;
+package MySnake.GameElements;
 
 import java.util.ArrayList;
 import java.util.List;

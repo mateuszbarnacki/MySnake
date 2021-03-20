@@ -2,9 +2,9 @@ module Snake {
     requires javafx.controls;
     requires javafx.fxml;
 
-    opens sample.GameElements;
-    opens sample.Style;
-    opens sample.Utilities;
-    opens sample.Window;
-    opens sample;
+    opens MySnake.GameElements;
+    opens MySnake.Style;
+    opens MySnake.Utilities;
+    opens MySnake.Window;
+    opens MySnake;
 }

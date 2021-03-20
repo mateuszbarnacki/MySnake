@@ -1,4 +1,4 @@
-package sample.GameElements;
+package MySnake.GameElements;
 
 public class Field {
     private int xCoord;

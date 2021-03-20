@@ -1,4 +1,4 @@
-package sample.Utilities;
+package MySnake.Utilities;
 
 public class KeyBuffer<T> {
     private Node<T> root;
