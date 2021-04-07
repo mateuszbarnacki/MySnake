@@ -29,6 +29,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+/**
+ * This class draws the board and the snake. It enables user to control the snake body.
+ */
+
 public class GameWindowController {
     private final String filename = "./snake_record.tmp";
     private final int xSize = 17;
@@ -50,6 +54,7 @@ public class GameWindowController {
     @FXML
     public Label topScore;
 
+    // initialize() function look for the current top score in the filesystem and prepare game board
     public void initialize(){
         if (!Files.exists(Paths.get(filename))) {
             record = new Record();
@@ -73,26 +78,19 @@ public class GameWindowController {
         refreshGame();
     }
 
+    // refreshGame() prepares default game board. It draws fields, adds event listener to the snake
+    // and prepare animation for the snake move.
     private void refreshGame() {
-        boolean isEven;
         snake = new Snake();
         keyBuffer = new KeyBuffer<>();
-        for(int y = 0; y < ySize; ++y){
-            for(int x = 0; x < xSize; ++x){
-                isEven = (x + y) % 2 == 0;
-                StackPane stackPane = new StackPane();
-                Rectangle rectangle = createRec(isEven);
-                stackPane.getChildren().add(rectangle);
-                if(x == xAppleCoord && y == yAppleCoord){
-                    Circle circle = new Circle(10);
-                    circle.setFill(Color.RED);
-                    stackPane.getChildren().add(circle);
-                }
-                gameWindow.add(stackPane, x, y);
-            }
-        }
+        drawBoard();
         drawSnake();
         gameWindow.setOnKeyPressed(this::moveSnake);
+        prepareSnakeAnimation();
+    }
+
+    // This function prepares the snake animation
+    private void prepareSnakeAnimation() {
         animation = new Timeline(new KeyFrame(Duration.millis(170), e -> {
             if (!keyBuffer.isEmpty()) {
                 String direction = keyBuffer.get();
@@ -118,6 +116,26 @@ public class GameWindowController {
         animation.setCycleCount(Animation.INDEFINITE);
     }
 
+    // This function draw the field of the board
+    private void drawBoard() {
+        boolean isEven;
+        for(int y = 0; y < ySize; ++y){
+            for(int x = 0; x < xSize; ++x){
+                isEven = (x + y) % 2 == 0;
+                StackPane stackPane = new StackPane();
+                Rectangle rectangle = createRec(isEven);
+                stackPane.getChildren().add(rectangle);
+                if(x == xAppleCoord && y == yAppleCoord){
+                    Circle circle = new Circle(10);
+                    circle.setFill(Color.RED);
+                    stackPane.getChildren().add(circle);
+                }
+                gameWindow.add(stackPane, x, y);
+            }
+        }
+    }
+
+    // This function draw a single field with appropriate color
     private Rectangle createRec(boolean isEven){
         double firstSize = gameWindow.getPrefWidth() / xSize;
         double secondSize = gameWindow.getPrefHeight() / ySize;
@@ -127,41 +145,33 @@ public class GameWindowController {
         return rectangle;
     }
 
+    // This function control snake body. If is end it stops the animation and refresh record.
+    // Otherwise it checks whether snake eat apple or not and draw snake body in new coordinates.
     private void drawSnake(){
         if(snake.isEnd()){
             animation.stop();
-            Dialog<ButtonType> dialog = new Dialog<>();
-
-            dialog.setTitle("End of the game");
-            dialog.setContentText("This is the end of the game. Your score: " + counter);
-            dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
-            dialog.show();
-            dialog.setOnShowing(e -> {
-
-                Optional<ButtonType> response = dialog.showAndWait();
-                if (response.isPresent() && (response.get() == ButtonType.OK)) {
-                    dialog.close();
-                }
-            });
+            prepareEndOfTheGameDialog();
             if (counter > record.getValue()) {
-                record.setValue(counter);
-                topScore.setText(record.toString());
-                try (FileOutputStream fileOutput = new FileOutputStream(filename);
-                     ObjectOutputStream output = new ObjectOutputStream(fileOutput)) {
-                    output.writeObject(record);
-                } catch (IOException e) {
-                    System.out.println("Couldn't write Record object: " + e.getMessage());
-                    e.printStackTrace();
-                }
+                setNewRecord();
             }
             setParams();
             initialize();
             return;
         }
+        checkApple();
+        drawSnakeBody();
+    }
+
+    // This function check if snake head is on the field with an apple or not.
+    private void checkApple() {
         if((snake.getSnake().get(0).getXCoord() == xAppleCoord) && (snake.getSnake().get(0).getYCoord() == yAppleCoord)){
             counter++;
             isApple = true;
         }
+    }
+
+    // This function draw snake body.
+    private void drawSnakeBody() {
         List<Field> temp = snake.getSnake();
         for(int y = 0; y < ySize; ++y){
             for(int x = 0; x < xSize; ++x){
@@ -176,12 +186,43 @@ public class GameWindowController {
                     }
                 }
                 if(isApple){
-                    drawApple();
+                    refreshScore();
                 }
             }
         }
     }
 
+    // This function prepare end of the game dialog window.
+    private void prepareEndOfTheGameDialog() {
+        Dialog<ButtonType> dialog = new Dialog<>();
+
+        dialog.setTitle("End of the game");
+        dialog.setContentText("This is the end of the game. Your score: " + counter);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
+        dialog.show();
+        dialog.setOnShowing(e -> {
+
+            Optional<ButtonType> response = dialog.showAndWait();
+            if (response.isPresent() && (response.get() == ButtonType.OK)) {
+                dialog.close();
+            }
+        });
+    }
+
+    // This function update top score if it's needed.
+    private void setNewRecord() {
+        record.setValue(counter);
+        topScore.setText(record.toString());
+        try (FileOutputStream fileOutput = new FileOutputStream(filename);
+             ObjectOutputStream output = new ObjectOutputStream(fileOutput)) {
+            output.writeObject(record);
+        } catch (IOException e) {
+            System.out.println("Couldn't write Record object: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    // This function set an appropriate color of the field.
     private void colorField(int xCoordinate, int yCoordinate, Color color){
         ObservableList<Node> nodes = gameWindow.getChildren();
         StackPane stackPane = (StackPane) nodes.get(yCoordinate * xSize + xCoordinate);
@@ -189,13 +230,17 @@ public class GameWindowController {
         rectangle.setFill(color);
     }
 
-    private void drawApple(){
-        animation.stop();
+    // This function remove apple eaten by a snake
+    private void removeOldApple() {
         ObservableList<Node> nodes = gameWindow.getChildren();
         StackPane stackPane = (StackPane) nodes.get(yAppleCoord * xSize + xAppleCoord);
         Rectangle rectangle = (Rectangle) stackPane.getChildren().get(0);
         rectangle.setFill(Color.VIOLET);
         stackPane.getChildren().remove(1);
+    }
+
+    // This function enlarge the snake body by adding a new field at the end of the snake
+    private void enlargeSnake() {
         int xCoordinate = snake.getSnake().get(snake.getSnake().size()-1).getXCoord();
         int yCoordinate = snake.getSnake().get(snake.getSnake().size()-1).getYCoord();
         boolean[] direction = snake.getSnake().get(snake.getSnake().size()-1).getCurrentDirection();
@@ -212,21 +257,40 @@ public class GameWindowController {
         field.setDirection(direction);
         snake.getSnake().add(field);
         snake.refresh();
-        currentScore.setText(Integer.toString(counter));
-        isApple = false;
+    }
+
+    // It sets the random coordinates of new apple
+    private void setCoordinatesOfNewApple() {
         boolean isOriginal = false;
         while(!isOriginal) {
             xAppleCoord = random.nextInt(17);
             yAppleCoord = random.nextInt(15);
             isOriginal = checkAppleCoords();
         }
-        stackPane = (StackPane) nodes.get(yAppleCoord * xSize + xAppleCoord);
+    }
+
+    // It draws apple (red circle)
+    private void drawApple() {
+        ObservableList<Node> nodes = gameWindow.getChildren();
+        StackPane stackPane = (StackPane) nodes.get(yAppleCoord * xSize + xAppleCoord);
         Circle circle = new Circle(10);
         circle.setFill(Color.RED);
         stackPane.getChildren().add(circle);
+    }
+
+    // This function refresh the score and set a new localization of the apple.
+    private void refreshScore(){
+        animation.stop();
+        removeOldApple();
+        enlargeSnake();
+        currentScore.setText(Integer.toString(counter));
+        isApple = false;
+        setCoordinatesOfNewApple();
+        drawApple();
         animation.play();
     }
 
+    // This function store all the key events in queue.
     private void moveSnake(KeyEvent keyEvent){
         if(firstPress){
             animation.play();
@@ -244,6 +308,7 @@ public class GameWindowController {
         keyEvent.consume();
     }
 
+    // This function check whether the snake eat an apple or not.
     private boolean checkAppleCoords(){
         for(Field element : snake.getSnake()){
             if((yAppleCoord == element.getYCoord()) && (xAppleCoord == element.getXCoord())){
@@ -253,6 +318,7 @@ public class GameWindowController {
         return true;
     }
 
+    // This function set default parameter of the game.
     private void setParams() {
         counter = 0;
         topScore.setText(record.toString());

@@ -3,9 +3,18 @@ package MySnake.GameElements;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class represent the whole snake object. Each element of the snake is stored in the List.
+ * change direction() function enables to change the direction of the head. Then move function
+ * update coordinates and direction for each element of snake body. refresh() function is used after
+ * enlarge snake - it set the appropriate direction of the penultimate element.
+ * isEnd() function check whether is the end of the game.
+ */
+
 public class Snake {
     private List<Field> snake;
 
+    // Initialize List and create a default snake body.
     public Snake(){
         snake = new ArrayList<Field>();
 
@@ -14,14 +23,21 @@ public class Snake {
         snake.add(new Field(1, 7));
     }
 
+    // Returns the snake body
     public List<Field> getSnake(){
         return this.snake;
     }
 
+    // Change direction of the head element
     public void changeDirection(boolean[] arr){
         snake.get(0).changeDirection(arr);
     }
 
+    /*
+        At the beginning function refresh the coordinates of the head. Then it gets the the direction
+        of the head and stores it in tempArr. Function refresh the value of the next element of the body,
+        gets it's direction and set a new direction, which was a direction of the previous element.
+     */
     public void move(){
         snake.get(0).refreshValue();
         boolean[] temp;
@@ -34,11 +50,13 @@ public class Snake {
         }
     }
 
+    // This function is used after enlarge of the snake.
     public void refresh(){
         boolean[] tempArr = snake.get(snake.size()-2).getCurrentDirection();
         snake.get(snake.size()-1).changeDirection(tempArr);
     }
 
+    // If snake hits the wall or itself function returns true. Otherwise returns false.
     public boolean isEnd(){
         boolean isEnd = false;
         if((snake.get(0).getXCoord() < 0) || (snake.get(0).getXCoord() == 17)){

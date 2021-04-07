@@ -1,5 +1,10 @@
 package MySnake.Utilities;
 
+/**
+ * This class is a queue which enables to store elements which represent a key arrow typed by user.
+ * @param <T>
+ */
+
 public class KeyBuffer<T> {
     private Node<T> root;
 
@@ -7,6 +12,7 @@ public class KeyBuffer<T> {
         this.root = null;
     }
 
+    // Add element to the end of the list
     public void add(T elem) {
         if (this.root == null) {
             this.root = new Node<>(elem);
@@ -19,6 +25,7 @@ public class KeyBuffer<T> {
         }
     }
 
+    // Get the first element of the list
     public T get() {
         T value = null;
         if (this.root.getNext() != null) {
@@ -33,12 +40,14 @@ public class KeyBuffer<T> {
         return value;
     }
 
+    // Check whether the queue is empty
     public boolean isEmpty() {
         boolean isEmpty = false;
         if (this.root == null) isEmpty = true;
         return isEmpty;
     }
 
+    // Print function used to test the class
     public void print() {
         Node<T> curr = this.root;
         while (curr != null) {
@@ -48,6 +57,11 @@ public class KeyBuffer<T> {
     }
 
 }
+
+/**
+ * This class represents the single element of the queue.
+ * @param <T>
+ */
 
 class Node<T> {
     private final T value;

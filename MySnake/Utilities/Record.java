@@ -2,6 +2,10 @@ package MySnake.Utilities;
 
 import java.io.Serializable;
 
+/**
+ * This class enables to store the best score in snake_record.tmp file.
+ */
+
 public class Record implements Serializable {
     private int value;
 
